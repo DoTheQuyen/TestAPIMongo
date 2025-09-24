@@ -1,6 +1,6 @@
 ﻿namespace TestAPIMongo.Controllers.DTOs
 {
-    public class OrdersFilterDTO
+    public class OrdersFilterDto
     {
         public string? PharmacyId { get; set; }
 

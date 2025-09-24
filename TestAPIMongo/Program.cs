@@ -11,9 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)  // optional, if using appsettings.json
-    .WriteTo.Console()   // logs to console
-    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day) // logs to file, new file every day
+    .ReadFrom.Configuration(builder.Configuration)  
+    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Month)
     .MinimumLevel.Information() // log info and above
     .CreateLogger();
 

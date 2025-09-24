@@ -5,7 +5,7 @@ namespace TestAPIMongo.Controllers.Mapping
 {
     public static class OrdersFilterDTOMapping
     {
-        public static OrdersFilterModel ToModel(this OrdersFilterDTO src, OrdersFilterModel? dst = null)
+        public static OrdersFilterModel ToModel(this OrdersFilterDto src, OrdersFilterModel? dst = null)
         {
             if (dst == null)
                 dst = new OrdersFilterModel();

@@ -28,7 +28,7 @@ namespace TestAPIMongo.Controllers
         /// <param name="ordersFilter"></param>
         /// <returns></returns>
         [HttpPost("get-orders-list")]
-        public async Task<IActionResult> GetOrdersList([FromBody] OrdersFilterDTO ordersFilter)
+        public async Task<IActionResult> GetOrdersList([FromBody] OrdersFilterDto ordersFilter)
         {          
             //Convert the DTO to model and send to service to process result
             var (orders, totalCount) = await _ordersService.GetOrdersList(ordersFilter.ToModel());

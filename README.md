@@ -15,9 +15,9 @@ To get started with this project, clone the repository and install the necessary
     MongoDB Compass
     NuGet CLI
 - NuGet packages:
-   # Main project packages
-    dotnet add package FluentValidation
-    dotnet add package FluentValidation.AspNetCore
+# Main project packages
+dotnet add package FluentValidation
+dotnet add package FluentValidation.AspNetCore
     dotnet add package Swashbuckle.AspNetCore
     dotnet add package Serilog.AspNetCore
     dotnet add package Serilog.Sinks.File

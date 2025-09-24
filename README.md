@@ -32,6 +32,12 @@ To get started with this project, clone the repository and install the necessary
 
 ## Usage
 
+Clone the project from https://github.com/DoTheQuyen/TestAPIMongo.git using Visual Studio.
+
+After pulling the project, go to git branch at bottom right of Visual Studio, select remotes tab, and switch to origin/master branch
+
+Close the solution, go to the folder where you pull the project and open the solution
+
 ## To run the API:
 
 Copy the sample-orders.json to the folder TestAPIMongo\bin\Debug\net8.0

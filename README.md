@@ -11,8 +11,6 @@ This project is a simple API built using Node.js and MongoDB. It allows users to
 To get started with this project, clone the repository and install the necessary dependencies:
 - Software:
 - Visual Studio 2022
-- MongoDB
-- MongoDB Compass
 - NuGet CLI
   
 - NuGet packages:

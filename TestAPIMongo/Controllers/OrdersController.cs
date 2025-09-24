@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TestAPIMongo.Controllers.DTOs;
 using TestAPIMongo.Controllers.Mapping;
-using TestAPIMongo.Data.Models;
 using TestAPIMongo.Services.Interface;
-using TestAPIMongo.Services.Services;
 
 namespace TestAPIMongo.Controllers
 {

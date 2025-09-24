@@ -15,6 +15,7 @@ namespace TestAPIMongo.Tests
         private Mock<IValidator<OrdersFilterModel>> _mockValidator;
         private Mock<ILogger<OrdersService>> _mockLogger;
         private IOrdersService _ordersService;
+        private IConfiguration _configuration;
 
         [SetUp]
         public void Setup()
@@ -23,15 +24,22 @@ namespace TestAPIMongo.Tests
             _mockValidator = new Mock<IValidator<OrdersFilterModel>>();
             _mockLogger = new Mock<ILogger<OrdersService>>();
 
+            var inMemorySettings = new Dictionary<string, string> {
+                {"Review:DailyOrderThresholdCents", "50000"}
+            };
+            _configuration = new ConfigurationBuilder()
+               .AddInMemoryCollection(inMemorySettings)
+               .Build();
+
             _mockValidator
                 .Setup(v => v.ValidateAsync(It.IsAny<OrdersFilterModel>(), default))
                 .ReturnsAsync(new FluentValidation.Results.ValidationResult());
 
             _mockOrders
                 .Setup(o => o.GetOrdersList(It.IsAny<OrdersFilterModel>()))
-                .ReturnsAsync((new List<OrdersModel> { new OrdersModel() }, 1));
+                .ReturnsAsync((new List<OrderModel> { new OrderModel() }, 1));
 
-            _ordersService = new OrdersService(_mockOrders.Object, _mockValidator.Object, _mockLogger.Object);
+            _ordersService = new OrdersService(_mockOrders.Object, _mockValidator.Object, _mockLogger.Object, _configuration);
         }
 
         [Test]

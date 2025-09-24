@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using TestAPIMongo.Data.DataAccess;
 using TestAPIMongo.Data.Interface;
 using TestAPIMongo.Data.Models;
 using TestAPIMongo.Services.Interface;
@@ -19,12 +20,14 @@ namespace TestAPIMongo.Services.Services
         private readonly IOrders _order;
         private readonly IValidator<OrdersFilterModel> _validator;
         private readonly ILogger<OrdersService> _logger;
+        private readonly long _threshold;
 
-        public OrdersService(IOrders order, IValidator<OrdersFilterModel> validator, ILogger<OrdersService> logger)
+        public OrdersService(IOrders order, IValidator<OrdersFilterModel> validator, ILogger<OrdersService> logger, IConfiguration configuration)
         {
             _order = order;
             _validator = validator;
             _logger = logger;
+            _threshold = configuration.GetValue<long>("Review:DailyOrderThresholdCents");
         }
 
         /// <summary>
@@ -34,7 +37,7 @@ namespace TestAPIMongo.Services.Services
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task<(List<OrdersModel>, long)> GetOrdersList(OrdersFilterModel filterModel)
+        public async Task<(IEnumerable<OrderModel>, long)> GetOrdersList(OrdersFilterModel filterModel)
         {
             try
             {
@@ -53,7 +56,13 @@ namespace TestAPIMongo.Services.Services
                 //Process business rule here
 
                 var result = await _order.GetOrdersList(filterModel);
-                _logger.LogInformation("Returned {Count} orders", result.Item1.Count);
+                _logger.LogInformation("Returned {Count} orders", result.Item1.Count());
+
+                for (var i = 0; i< result.Item1.Count(); i++)
+                {
+                    result.Item1.ElementAt(i).NeedsReview = result.Item1.ElementAt(i).TotalCents > _threshold;
+                }
+
 
                 return result;
             }

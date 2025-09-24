@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using MongoDB.Driver;
+using System.Text.Json;
 using TestAPIMongo.Data.Interface;
 using TestAPIMongo.Data.Models;
 
@@ -12,20 +12,33 @@ namespace TestAPIMongo.Data.DataAccess
     /// </summary>
     public class Orders : IOrders
     {
-        private readonly IMongoCollection<OrdersModel> _ordersCollection;
+        private readonly List<OrderModel> _ordersInMemory;
 
         public Orders(IOptions<DatabaseSetting> dbSettings)
         {
-            var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
-
-            var mongoDatabase = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
-
-            _ordersCollection = mongoDatabase.GetCollection<OrdersModel>(dbSettings.Value.OrdersCollectionName);
-        }
-
-        public Orders(IMongoCollection<OrdersModel> ordersCollection)
-        {
-            _ordersCollection = ordersCollection;
+            var jsonFilePath = Path.Combine(AppContext.BaseDirectory, "sample-orders.json");
+            if (!File.Exists(jsonFilePath))
+            {
+                _ordersInMemory = new List<OrderModel>();
+            }
+            else
+            {
+                var jsonString = File.ReadAllText(jsonFilePath);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                _ordersInMemory = JsonSerializer.Deserialize<List<OrderModel>>(jsonString, options)
+                                  ?? new List<OrderModel>();
+                foreach (var order in _ordersInMemory)
+                {
+                    if (DateTime.TryParse(order.CreatedAt, out var parsedDate))
+                    {
+                        // Replace string with normalized ISO string
+                        order.CreatedAt = parsedDate.ToString("o");
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -34,47 +47,43 @@ namespace TestAPIMongo.Data.DataAccess
         /// <param name="filterModel"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<(List<OrdersModel>, long)> GetOrdersList(OrdersFilterModel filterModel)
+        public async Task<(IEnumerable<OrderModel>, long)> GetOrdersList(OrdersFilterModel filterModel)
         {
             try
             {
-                var builder = Builders<OrdersModel>.Filter;
-                var filter = builder.Empty;
+                var query = _ordersInMemory.AsQueryable();
 
                 if (!string.IsNullOrEmpty(filterModel.PharmacyId))
-                    filter &= builder.Eq(e => e.PharmacyId, filterModel.PharmacyId);
+                    query = query.Where(o => o.PharmacyId == filterModel.PharmacyId);
 
                 if (!string.IsNullOrEmpty(filterModel.Status))
-                    filter &= builder.Eq(e => e.Status, filterModel.Status);
+                    query = query.Where(o => o.Status == filterModel.Status);
 
                 if (filterModel.From.HasValue)
-                    filter &= builder.Gte(e => e.CreatedAt, filterModel.From.Value);
+                    query = query.Where(o => o.CreatedAtDate >= filterModel.From.Value);
 
                 if (filterModel.To.HasValue)
-                    filter &= builder.Lte(e => e.CreatedAt, filterModel.To.Value);
+                    query = query.Where(o => o.CreatedAtDate <= filterModel.To.Value);
 
-                var totalCount = await _ordersCollection.CountDocumentsAsync(filter);
-
-                var query = _ordersCollection.Find(filter);
 
                 if (filterModel.isSortByCreatedAt)
                 {
                     query = filterModel.SortDescending
-                        ? query.SortByDescending(e => e.CreatedAt)
-                        : query.SortBy(e => e.CreatedAt);
+                        ? query.OrderByDescending(e => e.CreatedAt)
+                        : query.OrderBy(e => e.CreatedAt);
                 }
                 else
                 {
                     query = filterModel.SortDescending
-                        ? query.SortByDescending(e => e.TotalCents)
-                        : query.SortBy(e => e.TotalCents);
+                        ? query.OrderByDescending(e => e.TotalCents)
+                        : query.OrderBy(e => e.TotalCents);
                 }
-                    
 
-                var result = await query
-                            .Skip((filterModel.PageNumber - 1) * filterModel.PageSize)
-                            .Limit(filterModel.PageSize)
-                            .ToListAsync();
+                var totalCount = query.Count();
+                var result = query
+                    .Skip((filterModel.PageNumber - 1) * filterModel.PageSize)
+                    .Take(filterModel.PageSize)
+                    .ToList();
 
                 return (result, totalCount);
             }

@@ -13,21 +13,22 @@ namespace TestAPIMongo.Controllers.Mapping
     /// </summary>
     public static class OrdersDTOMapping
     {
-        public static OrdersDTO ToDTO(this OrdersModel src, OrdersDTO? dst = null)
+        public static OrderResponseDto ToDTO(this OrderModel src, OrderResponseDto? dst = null)
         {
             if (dst == null)
-                dst = new OrdersDTO();
+                dst = new OrderResponseDto();
 
-            src.Id = dst.Id;
-            src.PharmacyId = dst.PharmacyId;
-            src.Status = dst.Status;
-            src.CreatedAt = dst.CreatedAt;
+            dst.Id = src.Id;
+            dst.PharmacyId = src.PharmacyId;
+            dst.Status = src.Status;
+            dst.CreatedAt = src.CreatedAt;
             //mapping the totalCents parameter in model to Amount in DTO
-            src.TotalCents = dst.Amount;
-            src.ItemCount = dst.ItemCount;
-            src.PaymentMethod = dst.PaymentMethod;
-            src.DeliveryType = dst.DeliveryType;
-            src.Notes = dst.Notes;
+            dst.Amount = src.TotalCents;
+            dst.ItemCount = src.ItemCount;
+            dst.PaymentMethod = src.PaymentMethod;
+            dst.DeliveryType = src.DeliveryType;
+            dst.Notes = src.Notes;
+            dst.NeedsReview = src.NeedsReview;
 
             return dst;
         }

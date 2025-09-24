@@ -4,7 +4,7 @@ namespace TestAPIMongo.Data.Interface
 {
     public interface IOrders
     {
-        Task<(List<OrdersModel>, long)> GetOrdersList(OrdersFilterModel filterModel);
+        Task<(IEnumerable<OrderModel>, long)> GetOrdersList(OrdersFilterModel filterModel);
     }
 
 }

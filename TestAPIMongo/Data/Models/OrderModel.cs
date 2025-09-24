@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace TestAPIMongo.Data.Models
 {
-    public class OrdersModel
+    public class OrderModel
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -20,7 +20,7 @@ namespace TestAPIMongo.Data.Models
         public string Status { get; set; }
 
         [BsonElement("createdAt")]
-        public DateTime CreatedAt { get; set; }
+        public string CreatedAt { get; set; }
 
         [BsonElement("totalCents")]
         public long TotalCents { get; set; }
@@ -36,6 +36,13 @@ namespace TestAPIMongo.Data.Models
 
         [BsonElement("notes")]
         public string? Notes { get; set; }
+
+        
+        public bool? NeedsReview { get; set; }
+
+        [BsonIgnore]
+        public DateTime? CreatedAtDate =>
+            DateTime.TryParse(CreatedAt, out var dt) ? dt : null;
 
     }
 }

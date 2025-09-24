@@ -6,7 +6,7 @@ namespace TestAPIMongo.Controllers.DTOs
     /// We can change the name or remove parameters here to not expose sensitive data to public
     /// Example; change the TotalCents to Amount, and mapping the value in mapping class
     /// </summary>
-    public class OrdersDTO
+    public class OrderResponseDto
     {
         //example to show nad hide params.
         //the _id is the object Id of database which does not need to be shown to front-end
@@ -16,7 +16,7 @@ namespace TestAPIMongo.Controllers.DTOs
 
         public string Status { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public string CreatedAt { get; set; }
 
         public long Amount { get; set; }
 
@@ -27,5 +27,7 @@ namespace TestAPIMongo.Controllers.DTOs
         public string? DeliveryType { get; set; }
 
         public string? Notes { get; set; }
+
+        public bool? NeedsReview { get; set; }
     }
 }

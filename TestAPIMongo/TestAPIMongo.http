@@ -1,0 +1,6 @@
+@TestAPIMongo_HostAddress = https://localhost:5180
+
+GET {{TestAPIMongo_HostAddress}}/Orders/
+Accept: application/json
+
+###

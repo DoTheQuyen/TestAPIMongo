@@ -34,6 +34,8 @@ To get started with this project, clone the repository and install the necessary
 
 ## To run the API:
 
+Copy the sample-orders.json to the folder TestAPIMongo\bin\Debug\net8.0
+
 Load the project from GitHub and open it in Microsoft Visual Studio.
 
 Start the project by clicking the Run button.

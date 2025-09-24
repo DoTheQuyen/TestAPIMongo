@@ -15,7 +15,7 @@ To get started with this project, clone the repository and install the necessary
     MongoDB Compass
     NuGet CLI
   
-## NuGet packages:
+NuGet packages:
 # Main project packages
 dotnet add package FluentValidation
 dotnet add package FluentValidation.AspNetCore
